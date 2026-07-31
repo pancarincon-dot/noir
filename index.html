@@ -1939,6 +1939,143 @@ footer{
   transform:rotate(-3deg);
 }
 
+/* ============================================
+   MEJORAS EXPERIENCIA MÓVIL VERTICAL (PORTRAIT)
+   ============================================ */
+
+/* Hard fix: previene overflow horizontal en móvil */
+html,body{max-width:100vw;overflow-x:hidden;}
+img,video,iframe{max-width:100%;height:auto;}
+
+/* Tablet / móvil grande — hasta 900px */
+@media (max-width:900px){
+  h1,h2{word-wrap:break-word;overflow-wrap:break-word;}
+  /* Botones con tap target mínimo (44px = estándar accesibilidad móvil) */
+  a.btn-outline,button.btn,.co-cta,.orders-btn,.pm-buy,.quiz-start-btn,.cat-card,.product{min-height:44px;}
+}
+
+/* Móvil vertical (portrait) — hasta 600px: donde falla la experiencia */
+@media (max-width:600px){
+  /* Reducir padding vertical y horizontal en todas las secciones */
+  section{padding-top:60px!important;padding-bottom:60px!important;padding-left:16px!important;padding-right:16px!important;}
+
+  /* Nav más compacto */
+  #nav{padding:12px 16px;}
+
+  /* Hero: título más pequeño y más aire */
+  .hero-title{font-size:clamp(38px,11vw,64px)!important;line-height:1.02;}
+  .hero-grid{padding:0;gap:16px;}
+  .hero-sub{font-size:15px;}
+
+  /* Manifesto title más pequeño en móvil */
+  .manifesto h2{font-size:clamp(32px,9vw,52px)!important;line-height:1.05;}
+  .manifesto{padding:60px 20px!important;}
+
+  /* Catálogo: hacer las tarjetas visibles y usables */
+  .catalog-hero{padding:0;}
+  .catalog-hero h1{font-size:clamp(34px,9.5vw,52px);line-height:1.05;}
+  .catalog-grid{grid-template-columns:repeat(2,1fr)!important;gap:10px!important;}
+  .cat-card{padding:12px 10px!important;}
+  .cat-visual{margin-bottom:10px;}
+  .cat-family{font-size:8px!important;letter-spacing:.15em;margin-bottom:5px;}
+  .cat-name{font-size:12px!important;min-height:32px;margin-bottom:8px;letter-spacing:0;}
+  .cat-cta{font-size:9px!important;letter-spacing:.15em;padding-top:8px;}
+  .cat-cta::after{font-size:12px;}
+  .catalog-footer{padding:40px 20px!important;margin-top:50px;}
+
+  /* Productos grid en móvil vertical: 1 columna, más limpio */
+  .products-grid{gap:16px!important;padding:0 4px;}
+  .product{padding:24px 18px!important;}
+  .product-visual{aspect-ratio:1;min-height:220px!important;height:auto!important;}
+  .product-name{font-size:22px!important;line-height:1.15;}
+  .product-family{font-size:9px!important;letter-spacing:.2em;}
+  .product-mood{font-size:13px!important;line-height:1.4;}
+  .product-price{font-size:14px!important;}
+  .products-header{padding:0 4px;margin-bottom:24px;}
+  .products-subhead{font-size:14px!important;line-height:1.5;}
+
+  /* Gender dividers más compactos */
+  .gender-divider{margin:28px auto 16px!important;padding:0;}
+  .gender-divider-inner{padding:10px 16px!important;}
+  .gender-title{font-size:34px!important;}
+  .gender-eyebrow{font-size:10px!important;letter-spacing:.2em;}
+
+  /* Kits section más compacto */
+  .kits-divider{margin:40px auto 20px!important;padding:0 8px;}
+  .kits-title{font-size:26px!important;}
+
+  /* PRODUCT MODAL: crítico para móvil vertical */
+  .product-modal{padding:0;}
+  .product-modal-content{padding:16px!important;padding-top:56px!important;}
+  .product-modal-close{top:12px;right:12px;width:38px;height:38px;font-size:22px;}
+  .product-modal-grid{gap:24px!important;}
+  .pm-family{font-size:10px;letter-spacing:.2em;}
+  .pm-name{font-size:28px!important;line-height:1.1;margin-bottom:12px;}
+  .pm-mood{font-size:14px;margin-bottom:24px;}
+  .pm-price-row{padding:14px 0!important;margin-bottom:20px!important;gap:10px;}
+  .pm-price{font-size:24px!important;}
+  .pm-size{font-size:10px;padding:4px 8px;}
+  .pm-section{margin-bottom:24px!important;}
+  .pm-section h3{font-size:10px!important;letter-spacing:.2em;margin-bottom:12px;}
+  .pm-section p{font-size:14px;line-height:1.6;}
+  .pm-tier-notes{font-size:13px!important;}
+  .pm-fact-label{font-size:9px;}
+  .pm-fact-value{font-size:13px;}
+  .pm-buy{padding:14px 20px!important;font-size:12px!important;letter-spacing:.15em;width:100%;}
+  .pm-variant-btn,.pm-size-btn{padding:10px 14px!important;font-size:10px!important;flex:1 0 auto;min-width:0;}
+  .pm-variant-select,.pm-size-select{gap:6px!important;}
+
+  /* Comparison / manifesto grids en 1 columna */
+  .comparison-grid{gap:16px!important;}
+  .comparison-card{padding:20px!important;}
+
+  /* Custom orders (encargos) más compacto */
+  .custom-orders-inner{padding:0;gap:32px!important;}
+  .co-title{font-size:32px!important;line-height:1.05;}
+  .co-desc{font-size:14px;line-height:1.55;}
+  .co-features{gap:14px!important;}
+  .co-feature{padding:16px!important;}
+  .co-feature-txt{font-size:13px;}
+  .co-brands-list{gap:8px!important;}
+  .co-brands-list span{font-size:11px!important;padding:6px 10px!important;}
+  .co-cta{padding:14px 20px!important;font-size:12px!important;text-align:center;width:100%;}
+
+  /* Sobre nosotros */
+  .about-eyebrow{font-size:10px;letter-spacing:.25em;}
+  .about-inner h2{font-size:clamp(30px,8vw,44px)!important;line-height:1.1;}
+  .about-inner p{font-size:14px;line-height:1.6;}
+
+  /* Marquee más compacto */
+  .marquee{padding:10px 0;font-size:12px;}
+
+  /* Footer más compacto */
+  footer{padding:40px 20px 24px!important;}
+
+  /* Quiz */
+  .quiz-start-btn{padding:16px 24px;font-size:14px;}
+  .quiz-title{font-size:32px!important;line-height:1.1;}
+  .quiz-body{padding:20px!important;}
+
+  /* Progress bar de scroll */
+  .progress{height:3px;}
+}
+
+/* Móvil muy pequeño (iPhone SE, etc.) — hasta 380px */
+@media (max-width:380px){
+  section{padding-left:12px!important;padding-right:12px!important;}
+  .hero-title{font-size:34px!important;}
+  .manifesto h2{font-size:28px!important;}
+  .catalog-grid{gap:8px!important;}
+  .cat-card{padding:10px 8px!important;}
+  .cat-name{font-size:11px!important;min-height:28px;}
+  .cat-family{font-size:7px!important;}
+  .product{padding:18px 14px!important;}
+  .product-name{font-size:20px!important;}
+  .gender-title{font-size:28px!important;}
+  .pm-name{font-size:24px!important;}
+  .pm-price{font-size:20px!important;}
+}
+
 </style>
 </head>
 <body>
@@ -2019,8 +2156,8 @@ footer{
 <section class="manifesto">
   <div class="manifesto-grid">
     <div class="reveal">
-      <h2>Si lo tiene<br>medio <span class="under">mundo</span>,<br>no lo vendemos.</h2>
-      <p style="margin-top:32px;">Traemos lo que normalmente no ves o llega a un precio mayor. Probamos todos primero. Si no nos convence, no entra al drop. <strong style="color:var(--dark);font-weight:700;">Punto.</strong></p>
+      <h2>Si lo tiene<br>medio <span class="under">mundo,</span><br>no lo vendemos.</h2>
+      <p style="margin-top:32px;">Los mejores precios que puedes encontrar. Lo traemos directo — <strong style="color:var(--dark);font-weight:700;">sin intermediarios</strong>.</p>
       <p style="margin-top:16px;">Cada perfume viene con su <strong style="color:var(--dark);font-weight:700;">batch code visible</strong> y <strong style="color:var(--dark);font-weight:700;">código QR verificable de fábrica</strong>. No vendemos engaños.</p>
       <div style="margin-top:32px;display:flex;gap:20px;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--terra);">
         <span>· Sin intermediarios</span>
