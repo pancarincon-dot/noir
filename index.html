@@ -71,6 +71,19 @@ body.js-ready{cursor:none;}
   100%{box-shadow:0 0 0 24px rgba(201,168,124,0);}
 }
 .cursor.pulse{animation:cursorPulse .6s ease-out;}
+/* Sobre fondos dorados el anillo dorado se pierde: forzamos contraste oscuro */
+.cursor.on-gold{
+  border-color:var(--dark);
+  box-shadow:0 0 12px rgba(43,33,24,.35), inset 0 0 6px rgba(43,33,24,.15);
+}
+.cursor.on-gold.hover{
+  background:rgba(43,33,24,.15);border-color:var(--dark);
+  box-shadow:0 0 24px rgba(43,33,24,.5), inset 0 0 12px rgba(43,33,24,.25);
+}
+.cursor-dot.on-gold{
+  background:var(--dark);
+  box-shadow:0 0 6px rgba(43,33,24,.7);
+}
 @media (max-width:900px){.cursor,.cursor-dot{display:none;}}
 
 /* Scroll progress */
@@ -3640,6 +3653,18 @@ animateCursor();
 document.querySelectorAll('a,button,.product,.note,.cat-card,.quiz-option,.pm-size-btn,input,textarea,select,[onclick]').forEach(el=>{
   el.addEventListener('mouseenter', ()=>cursor.classList.add('hover'));
   el.addEventListener('mouseleave', ()=>cursor.classList.remove('hover'));
+});
+
+// Sobre secciones con fondo dorado, el cursor dorado se pierde: forzamos contraste oscuro
+document.querySelectorAll('.cta-section,.orders-section').forEach(el=>{
+  el.addEventListener('mouseenter', ()=>{
+    cursor.classList.add('on-gold');
+    cursorDot.classList.add('on-gold');
+  });
+  el.addEventListener('mouseleave', ()=>{
+    cursor.classList.remove('on-gold');
+    cursorDot.classList.remove('on-gold');
+  });
 });
 
 // Efecto de pulso al hacer click
