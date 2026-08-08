@@ -1467,6 +1467,27 @@ nav.scrolled{background:rgba(43,33,24,.85);backdrop-filter:blur(12px);padding:14
 }
 .auth-terms a{color:var(--dark);text-decoration:underline;}
 
+/* Google OAuth button */
+.auth-google{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:14px 20px;
+  background:var(--cream);border:1px solid rgba(43,33,24,.2);
+  color:var(--dark);cursor:pointer;
+  font-family:var(--mono);font-size:12px;letter-spacing:.15em;text-transform:uppercase;
+  transition:border-color .2s,background .2s;margin-bottom:20px;
+}
+.auth-google:hover{border-color:var(--gold);background:#FBF7F0;}
+.auth-google:disabled{opacity:.5;cursor:not-allowed;}
+.auth-google svg{width:18px;height:18px;flex-shrink:0;}
+.auth-divider{
+  display:flex;align-items:center;gap:12px;margin:0 0 20px;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;
+  color:rgba(43,33,24,.4);text-transform:uppercase;
+}
+.auth-divider::before,.auth-divider::after{
+  content:'';flex:1;height:1px;background:rgba(43,33,24,.15);
+}
+
 /* Account panel (cuando ya está logueado) */
 .account-modal{
   position:fixed;inset:0;background:var(--dark);z-index:9500;
@@ -1514,6 +1535,56 @@ nav.scrolled{background:rgba(43,33,24,.85);backdrop-filter:blur(12px);padding:14
 .wishlist-empty{
   padding:40px 20px;text-align:center;color:rgba(244,237,228,.4);font-family:var(--mono);
   font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+}
+/* Wishlist grid inside account modal */
+.wishlist-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:14px;margin-top:10px;
+}
+.wishlist-item{
+  position:relative;background:rgba(43,33,24,.4);border:1px solid rgba(201,168,124,.15);
+  padding:10px;border-radius:6px;cursor:pointer;transition:border-color .2s,transform .2s;
+  display:flex;flex-direction:column;gap:8px;
+}
+.wishlist-item:hover{border-color:var(--gold);transform:translateY(-2px);}
+.wishlist-item img{
+  width:100%;height:100px;object-fit:contain;background:rgba(244,237,228,.05);
+  border-radius:4px;padding:6px;
+}
+.wishlist-item-name{
+  font-size:12px;color:var(--cream);font-weight:600;line-height:1.3;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+}
+.wishlist-item-price{
+  font-family:var(--mono);font-size:10px;color:var(--gold);letter-spacing:.1em;
+}
+.wishlist-item-remove{
+  position:absolute;top:4px;right:4px;width:22px;height:22px;
+  background:rgba(43,33,24,.85);border:none;color:rgba(244,237,228,.5);
+  cursor:pointer;font-size:14px;line-height:1;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;transition:color .2s,background .2s;
+}
+.wishlist-item-remove:hover{color:var(--terra);background:rgba(43,33,24,.95);}
+
+/* Wishlist toggle button in product modal */
+.pm-wishlist-btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:12px 18px;margin-bottom:14px;
+  background:transparent;border:1px solid rgba(201,168,124,.35);color:var(--cream);
+  cursor:pointer;transition:all .2s;font-family:var(--mono);
+  font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+}
+.pm-wishlist-btn:hover{border-color:var(--gold);background:rgba(201,168,124,.08);}
+.pm-wishlist-btn.saved{
+  background:rgba(201,168,124,.15);border-color:var(--gold);color:var(--gold);
+}
+.pm-wishlist-btn .heart{
+  width:16px;height:16px;display:inline-block;
+  background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F4EDE4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/></svg>");
+  transition:filter .2s;
+}
+.pm-wishlist-btn.saved .heart{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C9A87C' stroke='%23C9A87C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/></svg>");
 }
 .account-logout{
   padding:14px 24px;background:transparent;color:rgba(244,237,228,.6);
@@ -3493,6 +3564,10 @@ img,video,iframe{max-width:100%;height:auto;}
         </div>
 
         <div class="pm-actions">
+          <button class="pm-wishlist-btn" id="pmWishlistBtn" onclick="toggleWishlist()" style="display:none;">
+            <span class="heart"></span>
+            <span class="pm-wishlist-label">Añadir a wishlist</span>
+          </button>
           <button class="pm-buy" id="pmBuyBtn" onclick="buyProduct()">Comprar por WhatsApp</button>
           <a href="#quiz" class="pm-secondary" onclick="closeProduct()">¿No estás seguro? Hacé el quiz</a>
         </div>
@@ -3535,6 +3610,11 @@ img,video,iframe{max-width:100%;height:auto;}
       <div id="signinPanel">
         <h2 class="auth-form-title">Volviste.</h2>
         <p class="auth-form-desc">Ingresa a tu Inner Circle.</p>
+        <button type="button" class="auth-google" onclick="handleGoogleAuth()">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuar con Google
+        </button>
+        <div class="auth-divider">o con email</div>
         <form onsubmit="event.preventDefault(); handleSignin();">
           <div class="auth-field">
             <label class="auth-label">Email</label>
@@ -3554,6 +3634,11 @@ img,video,iframe{max-width:100%;height:auto;}
       <div id="signupPanel" style="display:none;">
         <h2 class="auth-form-title">Únete.</h2>
         <p class="auth-form-desc">30 segundos. Sin verificación por email. Sin spam.</p>
+        <button type="button" class="auth-google" onclick="handleGoogleAuth()">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Continuar con Google
+        </button>
+        <div class="auth-divider">o con email</div>
         <form onsubmit="event.preventDefault(); handleSignup();">
           <div class="auth-field">
             <label class="auth-label">Nombre</label>
@@ -6243,6 +6328,7 @@ function openProduct(id, variantIdx){
     selectVariant(id, idxToUse, true);
     // Guardar el id y salir; selectVariant se encarga del resto
     document.getElementById('productModal').dataset.currentProduct = id;
+    updateWishlistBtnState(id);
     document.getElementById('productModal').classList.add('active');
     document.body.style.overflow = 'hidden';
     window.scrollTo(0, 0);
@@ -6293,6 +6379,7 @@ function openProduct(id, variantIdx){
 
   // Guardar el id actual para el botón buy
   document.getElementById('productModal').dataset.currentProduct = id;
+  updateWishlistBtnState(id);
 
   // Abrir modal
   document.getElementById('productModal').classList.add('active');
@@ -6494,7 +6581,7 @@ function initSupabase(){
     return null;
   }
   supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   });
   return supabaseClient;
 }
@@ -6634,6 +6721,33 @@ async function handleSignup(){
   }
 }
 
+async function handleGoogleAuth(){
+  const client = initSupabase();
+  if(!client){
+    alert('Cargando... intentá de nuevo en un segundo.');
+    return;
+  }
+  try {
+    // Al volver de Google, redirigimos a la página raíz. onAuthStateChange
+    // detecta la sesión y updateAuthUI se encarga de todo lo demás.
+    const { error } = await client.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + window.location.pathname,
+        queryParams: { prompt: 'select_account' }
+      }
+    });
+    if(error){
+      console.error('Google auth error:', error);
+      alert('No se pudo iniciar sesión con Google: ' + (error.message || 'error desconocido'));
+    }
+    // Si no hay error, el navegador se está redirigiendo a Google.
+  } catch(err){
+    console.error('Google auth exception:', err);
+    alert('Error inesperado. Revisá la consola (F12).');
+  }
+}
+
 async function handleSignin(){
   const emailEl = document.getElementById('signinEmail');
   const passEl = document.getElementById('signinPassword');
@@ -6692,6 +6806,8 @@ function openAccount(){
   document.getElementById('accountName').textContent = currentUser.name || 'Miembro';
   // Cargar datos del perfil
   loadProfileData();
+  // Renderizar wishlist del usuario actual
+  renderWishlist();
   // Reset a tab overview siempre que se abre
   switchAccountTab('overview');
   document.getElementById('accountModal').classList.add('active');
@@ -6919,12 +7035,112 @@ async function updateAuthUI(user){
     authBtn.style.display = 'inline-flex';
     userBadge.style.display = 'none';
   }
+  // Sincronizar botón de wishlist si el modal del producto está abierto
+  const modal = document.getElementById('productModal');
+  if(modal?.classList.contains('active')){
+    updateWishlistBtnState(modal.dataset.currentProduct);
+  }
 }
 
 // getCurrentUser sincrónico (para el chat AI)
 function getCurrentUser(){
   return currentUser;
 }
+
+// ============ WISHLIST ============
+// Cada usuario tiene su lista de productos favoritos, guardada en localStorage
+// bajo la key `sp_wishlist_<userId>`. Aparece únicamente para usuarios logueados.
+function wishlistKey(){
+  return currentUser ? `sp_wishlist_${currentUser.id}` : null;
+}
+function getWishlist(){
+  const key = wishlistKey();
+  if(!key) return [];
+  try {
+    return JSON.parse(localStorage.getItem(key) || '[]');
+  } catch(e){ return []; }
+}
+function setWishlist(list){
+  const key = wishlistKey();
+  if(!key) return;
+  localStorage.setItem(key, JSON.stringify(list));
+}
+function isInWishlist(id){
+  return getWishlist().includes(id);
+}
+function toggleWishlist(){
+  if(!currentUser){ openAuth('signin'); return; }
+  const modal = document.getElementById('productModal');
+  const id = modal.dataset.currentProduct;
+  if(!id) return;
+  const list = getWishlist();
+  const idx = list.indexOf(id);
+  if(idx >= 0){
+    list.splice(idx, 1);
+  } else {
+    list.push(id);
+  }
+  setWishlist(list);
+  updateWishlistBtnState(id);
+  // Re-render wishlist panel si el account modal está abierto
+  if(document.getElementById('accountModal')?.classList.contains('active')){
+    renderWishlist();
+  }
+}
+function updateWishlistBtnState(id){
+  const btn = document.getElementById('pmWishlistBtn');
+  if(!btn) return;
+  // Mostrar solo si hay usuario logueado
+  if(!currentUser){
+    btn.style.display = 'none';
+    return;
+  }
+  btn.style.display = 'inline-flex';
+  const label = btn.querySelector('.pm-wishlist-label');
+  if(isInWishlist(id)){
+    btn.classList.add('saved');
+    if(label) label.textContent = 'Guardado en wishlist ✓';
+  } else {
+    btn.classList.remove('saved');
+    if(label) label.textContent = 'Añadir a wishlist';
+  }
+}
+function renderWishlist(){
+  const container = document.getElementById('wishlistContent');
+  if(!container) return;
+  const list = getWishlist();
+  if(!list.length){
+    container.innerHTML = '<div class="wishlist-empty">Aún sin aromas guardados</div>';
+    return;
+  }
+  const html = list.map(id => {
+    const p = productsData[id];
+    if(!p) return '';
+    // Copiar imagen desde la card del catálogo/bestsellers
+    const card = document.querySelector(`[data-product="${id}"] img`);
+    const imgSrc = card ? card.src : '';
+    return `
+      <div class="wishlist-item" onclick="closeAccount(); openProduct('${id}');">
+        <button class="wishlist-item-remove" onclick="event.stopPropagation(); removeFromWishlist('${id}');" aria-label="Quitar">×</button>
+        ${imgSrc ? `<img src="${imgSrc}" alt="${p.name}" />` : ''}
+        <div class="wishlist-item-name">${p.name}</div>
+        <div class="wishlist-item-price">${p.price || ''}</div>
+      </div>
+    `;
+  }).filter(Boolean).join('');
+  container.innerHTML = `<div class="wishlist-grid">${html}</div>`;
+}
+function removeFromWishlist(id){
+  const list = getWishlist().filter(x => x !== id);
+  setWishlist(list);
+  renderWishlist();
+  // Si el modal del producto está abierto con ese id, sincronizar botón
+  const modal = document.getElementById('productModal');
+  if(modal?.dataset.currentProduct === id){
+    updateWishlistBtnState(id);
+  }
+}
+// ============ /WISHLIST ============
 
 // Welcome toast — usuarios nuevos ven código de descuento; recurrentes solo saludo
 function showWelcomeToast(name, isNew){
@@ -6975,9 +7191,34 @@ async function bootAuth(){
   // Restaurar sesión si existe
   const { data: { session } } = await client.auth.getSession();
   await updateAuthUI(session?.user || null);
-  // Escuchar cambios de auth (login en otra pestaña, logout, etc.)
-  client.auth.onAuthStateChange(async (_event, session)=>{
+  // Escuchar cambios de auth (login en otra pestaña, logout, OAuth callback, etc.)
+  client.auth.onAuthStateChange(async (event, session)=>{
     await updateAuthUI(session?.user || null);
+    // Si venimos de un login OAuth (Google), cerramos el modal si estaba abierto
+    // y limpiamos el hash de la URL que quedó del redirect.
+    if(event === 'SIGNED_IN' && session){
+      const authModal = document.getElementById('authModal');
+      if(authModal?.classList.contains('active')){
+        closeAuth();
+      }
+      // Detectar si fue OAuth por la presencia de user_metadata.provider
+      const isOAuth = session.user?.app_metadata?.provider &&
+                      session.user.app_metadata.provider !== 'email';
+      if(isOAuth){
+        const displayName = session.user.user_metadata?.full_name
+          || session.user.user_metadata?.name
+          || (session.user.email ? session.user.email.split('@')[0] : 'Miembro');
+        // Detectar si es nuevo (created_at ≈ last_sign_in_at, con margen de 60s)
+        const created = new Date(session.user.created_at).getTime();
+        const lastSignIn = new Date(session.user.last_sign_in_at || session.user.created_at).getTime();
+        const isNew = Math.abs(lastSignIn - created) < 60000;
+        showWelcomeToast(displayName.split(' ')[0], isNew);
+        // Limpiar el hash sucio del OAuth redirect
+        if(window.location.hash.includes('access_token')){
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }
+      }
+    }
   });
 }
 bootAuth();
