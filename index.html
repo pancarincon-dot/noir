@@ -6631,25 +6631,48 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ========= META PIXEL: LEAD TRACKING FOR WHATSAPP CLICKS =========
-// Cada click en un link/boton que abra WhatsApp cuenta como un Lead.
-// Es el evento de conversion principal — es donde efectivamente empieza la compra.
-document.addEventListener('click', (e) => {
-  const link = e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
-  if(!link) return;
+// Cada apertura de WhatsApp cuenta como un Lead — es el evento de conversion
+// principal, es donde efectivamente empieza la compra.
+// Interceptamos DOS canales: links <a href="wa.me..."> y window.open('https://wa.me/...')
+// porque los botones "Comprar por WhatsApp" y "Pedir catálogo" usan window.open.
+
+function _spTrackWhatsAppLead(){
   if(typeof fbq === 'undefined') return;
-  // Intentar extraer info del contexto (si es un producto abierto)
-  let content_name = null, content_ids = null;
+  // Intentar extraer info del producto abierto (si el modal está activo)
+  let content_name = null, content_ids = null, value = null;
   const modal = document.getElementById('productModal');
   if(modal && modal.classList.contains('active') && modal.dataset.currentProduct){
     const id = modal.dataset.currentProduct;
     content_ids = [id];
-    if(productsData[id]) content_name = productsData[id].name;
+    if(productsData[id]){
+      content_name = productsData[id].name;
+      value = parseFloat(String(productsData[id].price).replace(/[^\d]/g, '')) || null;
+    }
   }
-  const payload = {};
+  const payload = { currency: 'COP' };
   if(content_name) payload.content_name = content_name;
   if(content_ids) payload.content_ids = content_ids;
+  if(value) payload.value = value;
   fbq('track', 'Lead', payload);
+}
+
+// (1) Links <a href="wa.me...">
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
+  if(!link) return;
+  _spTrackWhatsAppLead();
 }, true);
+
+// (2) window.open() con URLs de WhatsApp (buyProduct, orderCatalog, etc.)
+const _originalWindowOpen = window.open;
+window.open = function(url, ...rest){
+  try {
+    if(typeof url === 'string' && (url.indexOf('wa.me') !== -1 || url.indexOf('api.whatsapp.com') !== -1)){
+      _spTrackWhatsAppLead();
+    }
+  } catch(err){ /* nunca romper el flujo real */ }
+  return _originalWindowOpen.call(window, url, ...rest);
+};
 
 function buyProduct(){
   const modal = document.getElementById('productModal');
