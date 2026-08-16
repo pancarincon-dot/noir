@@ -2321,6 +2321,25 @@ img,video,iframe{max-width:100%;height:auto;}
 }
 
 </style>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1642854970540020');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1642854970540020&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
 </head>
 <body>
 
@@ -6374,6 +6393,19 @@ const productsData = {
 function openProduct(id, variantIdx){
   const p = productsData[id];
   if(!p) return;
+
+  // Meta Pixel: ViewContent
+  if(typeof fbq !== 'undefined'){
+    const priceNum = parseFloat(String(p.price).replace(/[^\d]/g, '')) || 0;
+    fbq('track', 'ViewContent', {
+      content_name: p.name,
+      content_ids: [id],
+      content_type: 'product',
+      value: priceNum,
+      currency: 'COP'
+    });
+  }
+
   // If a specific variant is requested, remember it so the code below can activate it
   const requestedVariantIdx = (variantIdx !== undefined && variantIdx !== null && p.variants && p.variants[variantIdx]) ? Number(variantIdx) : null;
 
@@ -6598,6 +6630,27 @@ document.addEventListener('DOMContentLoaded', () => {
   if(id && productsData[id]) openProduct(id);
 });
 
+// ========= META PIXEL: LEAD TRACKING FOR WHATSAPP CLICKS =========
+// Cada click en un link/boton que abra WhatsApp cuenta como un Lead.
+// Es el evento de conversion principal — es donde efectivamente empieza la compra.
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
+  if(!link) return;
+  if(typeof fbq === 'undefined') return;
+  // Intentar extraer info del contexto (si es un producto abierto)
+  let content_name = null, content_ids = null;
+  const modal = document.getElementById('productModal');
+  if(modal && modal.classList.contains('active') && modal.dataset.currentProduct){
+    const id = modal.dataset.currentProduct;
+    content_ids = [id];
+    if(productsData[id]) content_name = productsData[id].name;
+  }
+  const payload = {};
+  if(content_name) payload.content_name = content_name;
+  if(content_ids) payload.content_ids = content_ids;
+  fbq('track', 'Lead', payload);
+}, true);
+
 function buyProduct(){
   const modal = document.getElementById('productModal');
   const id = modal.dataset.currentProduct;
@@ -6793,6 +6846,10 @@ async function handleSignup(){
       closeAuth();
       await updateAuthUI(data.user);
       showWelcomeToast(name, true);
+      // Meta Pixel: CompleteRegistration (email signup exitoso)
+      if(typeof fbq !== 'undefined'){
+        fbq('track', 'CompleteRegistration', { method: 'email' });
+      }
     }
   } catch(err){
     console.error('Signup error:', err);
@@ -7160,6 +7217,18 @@ function toggleWishlist(){
     list.splice(idx, 1);
   } else {
     list.push(id);
+    // Meta Pixel: AddToWishlist (solo al agregar, no al quitar)
+    if(typeof fbq !== 'undefined'){
+      const p = productsData[id];
+      const priceNum = p ? (parseFloat(String(p.price).replace(/[^\d]/g, '')) || 0) : 0;
+      fbq('track', 'AddToWishlist', {
+        content_ids: [id],
+        content_name: p ? p.name : id,
+        content_type: 'product',
+        value: priceNum,
+        currency: 'COP'
+      });
+    }
   }
   setWishlist(list);
   updateWishlistBtnState(id);
@@ -7294,6 +7363,10 @@ async function bootAuth(){
         const lastSignIn = new Date(session.user.last_sign_in_at || session.user.created_at).getTime();
         const isNew = Math.abs(lastSignIn - created) < 60000;
         showWelcomeToast(displayName.split(' ')[0], isNew);
+        // Meta Pixel: CompleteRegistration solo si es nuevo usuario OAuth (Google)
+        if(isNew && typeof fbq !== 'undefined'){
+          fbq('track', 'CompleteRegistration', { method: 'google' });
+        }
         // Limpiar el hash sucio del OAuth redirect
         if(window.location.hash.includes('access_token')){
           history.replaceState(null, '', window.location.pathname + window.location.search);
