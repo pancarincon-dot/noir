@@ -134,18 +134,18 @@ nav.scrolled{background:rgba(43,33,24,.85);backdrop-filter:blur(12px);padding:14
 /* ============ SEARCH BAR ============ */
 .nav-search{
   position:relative;display:flex;align-items:center;
-  min-width:220px;max-width:320px;flex:0 1 260px;
-  margin:0 14px;
+  min-width:260px;max-width:460px;flex:1 1 380px;
+  margin:0 18px;
   isolation:isolate; /* se aisla del mix-blend-mode del nav */
   mix-blend-mode:normal;
   z-index:2;
 }
 .nav-search-input{
-  width:100%;padding:11px 14px 11px 38px;
+  width:100%;padding:13px 18px 13px 44px;
   background:var(--dark);           /* sólido café oscuro */
   border:1.5px solid var(--gold);    /* borde dorado visible */
-  border-radius:24px;color:var(--cream);
-  font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+  border-radius:28px;color:var(--cream);
+  font-family:var(--mono);font-size:12px;letter-spacing:.14em;
   text-transform:uppercase;outline:none;
   transition:all .25s ease;
   box-shadow:0 4px 14px rgba(0,0,0,.45), inset 0 1px 0 rgba(244,237,228,.04);
@@ -158,9 +158,9 @@ nav.scrolled{background:rgba(43,33,24,.85);backdrop-filter:blur(12px);padding:14
   box-shadow:0 6px 20px rgba(0,0,0,.55), 0 0 0 3px rgba(201,168,124,.25);
 }
 .nav-search-icon{
-  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  position:absolute;left:17px;top:50%;transform:translateY(-50%);
   color:var(--gold);pointer-events:none;
-  width:14px;height:14px;z-index:3;
+  width:16px;height:16px;z-index:3;
 }
 .nav-search-clear{
   position:absolute;right:10px;top:50%;transform:translateY(-50%);
@@ -176,10 +176,12 @@ nav.scrolled{background:rgba(43,33,24,.85);backdrop-filter:blur(12px);padding:14
   position:fixed;                      /* FIXED, ya no está dentro del nav */
   background:#2B2118;
   border:1.5px solid var(--gold);
-  max-height:420px;overflow-y:auto;z-index:10000;
+  min-width:360px;                     /* nunca menor que esto */
+  max-height:60vh;overflow-y:auto;z-index:10000;
   display:none;box-shadow:0 20px 50px rgba(0,0,0,.75);
   mix-blend-mode:normal;
   backdrop-filter:none;
+  border-radius:8px;
 }
 .nav-search-results.show{display:block;}
 .nav-search-result{
@@ -197,29 +199,35 @@ nav.scrolled{background:rgba(43,33,24,.85);backdrop-filter:blur(12px);padding:14
   border:1px solid rgba(244,237,228,.08);
   border-radius:6px;padding:4px;
 }
-.nav-search-result-info{flex:1;min-width:0;}
+.nav-search-result-info{flex:1 1 auto;min-width:0;overflow:hidden;}
 .nav-search-result-name{
-  font-family:var(--display);font-weight:600;font-size:13px;
-  color:var(--cream);letter-spacing:-.01em;
+  font-family:var(--display);font-weight:600;font-size:14px;
+  color:var(--cream);letter-spacing:-.01em;line-height:1.2;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .nav-search-result-fam{
   font-family:var(--mono);font-size:9px;letter-spacing:.15em;
-  color:var(--gold);opacity:.8;text-transform:uppercase;margin-top:3px;
+  color:var(--gold);opacity:.8;text-transform:uppercase;margin-top:4px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .nav-search-result-price{
-  font-family:var(--mono);font-size:10px;color:var(--cream);opacity:.7;
-  white-space:nowrap;flex-shrink:0;
+  font-family:var(--mono);font-size:11px;color:var(--cream);opacity:.85;
+  white-space:nowrap;flex-shrink:0;margin-left:12px;font-weight:700;
 }
 .nav-search-empty{
   padding:20px 14px;text-align:center;
   font-family:var(--mono);font-size:10px;letter-spacing:.15em;
   color:var(--cream);opacity:.5;text-transform:uppercase;
 }
+@media (max-width:1200px){
+  .nav-search{min-width:220px;max-width:360px;flex:1 1 300px;margin:0 12px;}
+  .nav-search-input{font-size:11px;padding:12px 16px 12px 40px;}
+  .nav-search-icon{left:15px;width:15px;height:15px;}
+}
 @media (max-width:900px){
-  .nav-search{min-width:160px;flex:0 1 180px;margin:0 8px;}
-  .nav-search-input{font-size:10px;padding:9px 12px 9px 34px;}
-  .nav-search-icon{left:12px;}
+  .nav-search{min-width:180px;max-width:260px;flex:0 1 220px;margin:0 10px;}
+  .nav-search-input{font-size:10px;padding:10px 14px 10px 36px;letter-spacing:.1em;}
+  .nav-search-icon{left:13px;width:14px;height:14px;}
 }
 @media (max-width:700px){
   /* Móvil: la barra va en una segunda fila del nav, ocupando ancho completo */
@@ -9000,9 +9008,23 @@ function _positionSearchResults(){
   const box = document.getElementById('navSearchResults');
   if(!input || !box) return;
   const r = input.getBoundingClientRect();
+  const viewport = window.innerWidth;
+  const MIN_W = 360;
+  const PAD = 16; // margen al borde del viewport
+  // Ancho = max(input width, MIN_W), pero sin sobresalir del viewport
+  let width = Math.max(r.width, MIN_W);
+  if(viewport < MIN_W + PAD*2){
+    width = viewport - PAD*2; // en pantallas muy chicas, ocupar casi todo
+  }
+  // Alinear a la derecha del input, pero si no cabe, recular hacia la izquierda
+  let left = r.left;
+  if(left + width + PAD > viewport){
+    left = viewport - width - PAD;
+  }
+  if(left < PAD) left = PAD;
   box.style.top = (r.bottom + 8) + 'px';
-  box.style.left = r.left + 'px';
-  box.style.width = r.width + 'px';
+  box.style.left = left + 'px';
+  box.style.width = width + 'px';
 }
 // Mover el dropdown al body apenas carga (escapa del mix-blend-mode del nav)
 (function _detachSearchResults(){
